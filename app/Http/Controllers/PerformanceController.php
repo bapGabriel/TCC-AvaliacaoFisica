@@ -60,30 +60,45 @@ class PerformanceController extends Controller
  */
 public function gerarGrafico($student_id, $exercicio)
 {
-    // Comando para executar o script Python
-    $command = "python3 C:/Users/bruno/OneDrive/Documentos/TCC/tcc/gerar_grafico.py $student_id $exercicio";
-    $output = shell_exec($command);
+    // Lógica para buscar dados de desempenho e percentis
+    $student = Student::find($student_id);
+    $percentis = Percentis::where('tipo_exercicio', $exercicio)->first();
 
-    // Registra a saída do script Python para depuração
-    \Illuminate\Support\Facades\Log::info("Python script output: " . $output);
+    if (!$student || !$percentis) {
+        return response()->json(['error' => 'Dados não encontrados'], 404);
+    }
 
-    // Caminho onde o gráfico é salvo
-    $filePath = storage_path("app/public/grafico_{$student_id}_{$exercicio}.png");
+    return response()->json([
+        'desempenho' => $student->tests->pluck($exercicio),  // Exemplo de como acessar os dados de desempenho
+        'percentis' => $percentis
+    ]);
+}
 
-    if (file_exists($filePath)) {
-        // Retorna mensagem de sucesso se o arquivo existir
-        return response()->json([
-            'mensagem' => 'Gráfico gerado com sucesso!',
-            'imagem' => asset("storage/grafico_{$student_id}_{$exercicio}.png")
-        ]);
-    } else {
-        // Registra o erro e retorna uma resposta de erro se o arquivo não existir
-        \Illuminate\Support\Facades\Log::error("Falha ao gerar a imagem do gráfico. Arquivo não encontrado em: $filePath");
-        return response()->json([
-            'mensagem' => 'Erro ao gerar o gráfico.',
-            'output' => $output
-        ], 500);
+public function getPercentisByAge($exercicio)
+{
+    try {
+        // Busca todos os percentis relacionados ao exercício, ordenados por idade
+        $percentis = Percentis::where('tipo_exercicio', $exercicio)
+                              ->orderBy('idade')
+                              ->get(['idade', 'percentil_fraco', 'percentil_razoavel', 'percentil_bom', 'percentil_muito_bom', 'percentil_excelente']);
+        
+        if ($percentis->isEmpty()) {
+            return response()->json(['mensagem' => 'Nenhum percentil encontrado para este exercício'], 404);
+        }
+
+        // Retorna o JSON com os percentis
+        return response()->json(['percentis' => $percentis]);
+    } catch (\Exception $e) {
+        // Log para capturar qualquer erro no servidor
+        Log::error('Erro ao buscar percentis: ' . $e->getMessage());
+        return response()->json(['mensagem' => 'Erro ao buscar percentis'], 500);
     }
 }
+
+
+
+
+    
+
 
 }

@@ -15,6 +15,9 @@ Route::get('/student/{student}/performance/{exercise}', [PerformanceController::
 
 Route::get('/generate-chart/{student_id}/{exercicio}', [PerformanceController::class, 'gerarGrafico']);
 
+Route::get('/performance/{student_id}/{exercicio}/gerarGrafico', [PerformanceController::class, 'gerarGrafico']);
+Route::get('/performance/percentis/{exercicio}', [PerformanceController::class, 'getPercentisByAge']);
+
 
 Route::get('/students/{student}', [StudentController::class, 'show'])->name('students.show');
 Route::get('/students', [StudentController::class, 'index'])->name('students.index');
