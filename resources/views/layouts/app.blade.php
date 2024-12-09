@@ -12,7 +12,7 @@
 <body>
     <nav>
         <a href="{{ route('students.index') }}">Alunos</a>
-        <a href="{{ route('login') }}">Login</a>
+        <a href="{{ route('login') }}">Dashboard</a>
     </nav>
     
     <div class="container">

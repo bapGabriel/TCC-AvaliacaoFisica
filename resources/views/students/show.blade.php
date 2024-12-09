@@ -4,130 +4,166 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Desempenho do Aluno: {{ $student->name }}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body>
-    <h1>Desempenho do Aluno: {{ $student->name }}</h1>
+<meta name="csrf-token" content="{{ csrf_token() }}">
+<body class="d-flex flex-column min-vh-100 bg-light">
+    <!-- Header -->
+    <header class="bg-dark text-white py-3">
+        <div class="container d-flex justify-content-between align-items-center">
+            <h1 class="h5 mb-0">Desempenho do Aluno</h1>
+            <button onclick="window.location.href='/dashboard'" class="btn btn-outline-light">Voltar ao Dashboard</button>
+            <button onclick="enviarGraficosParaPDF()" id="export-pdf" class="btn btn-warning ms-2">Gerar PDF</button>
+        </div>
+    </header>
 
-    <!-- Armazena o studentId -->
-    <div id="student-data" data-student-id="{{ $student->id }}"></div>
+    <!-- Main Content -->
+    <main class="container my-5">
+    <h2 class="text-center mb-4">Desempenho do Aluno: <strong class="text-primary">{{ $student->name }}</strong></h2>
+    <p class="text-center text-muted">Acompanhe os resultados e veja como {{ $student->name }} está progredindo em diferentes métricas.</p>
+    
 
-    <!-- Seção de Seleção de Exercício e Geração de Gráfico -->
-    <div>
-        <label for="exercicio">Selecione o exercício:</label>
-        <select id="exercicio" name="exercicio">
-            <option value="flexibilidade">Flexibilidade</option>
-            <option value="abdominais">Abdominais</option>
-            <option value="corrida">Corrida de 6 Minutos</option>
-        </select>
-        <button onclick="gerarGrafico()">Gerar Gráfico</button>
-    </div>
+    <!-- Gráficos -->
+    <div id="graficos-container" class="row gy-4"></div>
+</main>
 
-    <!-- Exibição do Gráfico -->
-    <div id="grafico-container" style="margin-top: 20px;">
-        <h2>Gráfico de Percentis por Idade</h2>
-        <canvas id="grafico" style="display: none; width: 600px; height: auto;"></canvas>
-    </div>
 
-    <!-- Script para Gerar o Gráfico com Chart.js -->
+    <!-- Footer -->
+    <footer class="mt-auto bg-dark text-white py-3">
+        <div class="container text-center">
+            <small>&copy; 2024 Projeto TCC. Todos os direitos reservados.</small>
+        </div>
+    </footer>
+
     <script>
-    function gerarGrafico() {
-        const studentId = document.getElementById('student-data').dataset.studentId;
-        const exercicio = document.getElementById('exercicio').value;
+        function gerarGrafico() {
+            const studentId = "{{ $student->id }}"; // Obtém o ID do aluno diretamente
+            const url = `/api/performance/student/${studentId}/all`;
 
-        const url = `http://127.0.0.1:8000/performance/percentis/${exercicio}`;
+            const exercicioMapping = {
+                'abdominals': 'abdominais',
+                'flexibility': 'flexibilidade',
+                'run_6min': 'corrida_6min',
+                'medicine_ball': 'medicine_ball',
+                'horizontal_jump': 'salto_horizontal',
+                'square_run': 'corrida_no_quadrado',
+                'run_20m': 'corrida_20_metros'
+            };
 
-        fetch(url)
-            .then(response => response.json())
-            .then(data => {
-                if (data.percentis) {
-                    const percentisData = data.percentis;
-
-                    // Extrai as idades e percentis para o gráfico
-                    const idades = percentisData.map(item => item.idade);
-                    const percentilFraco = percentisData.map(item => item.percentil_fraco);
-                    const percentilRazoavel = percentisData.map(item => item.percentil_razoavel);
-                    const percentilBom = percentisData.map(item => item.percentil_bom);
-                    const percentilMuitoBom = percentisData.map(item => item.percentil_muito_bom);
-                    const percentilExcelente = percentisData.map(item => item.percentil_excellente);
-
-                    const ctx = document.getElementById('grafico').getContext('2d');
-                    document.getElementById('grafico').style.display = 'block';
-
-                    if (window.performanceChart) {
-                        window.performanceChart.destroy();
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Erro ao obter dados da API");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (!data || !data.percentis || !data.desempenho) {
+                        console.error("Estrutura de dados inválida:", data);
+                        return;
                     }
 
-                    window.performanceChart = new Chart(ctx, {
-                        type: 'line',
-                        data: {
-                            labels: idades,
-                            datasets: [
-                                {
-                                    label: 'Percentil Fraco',
-                                    data: percentilFraco,
-                                    borderColor: 'red',
-                                    borderDash: [5, 5],
-                                    fill: false
+                    for (const [exercicioKey, apiExercicioKey] of Object.entries(exercicioMapping)) {
+                        const percentisData = data.percentis[apiExercicioKey];
+                        if (!percentisData) {
+                            console.warn(`Percentis para ${apiExercicioKey} não encontrado.`);
+                            continue;
+                        }
+
+                        const idadeLabels = percentisData.map(p => p.idade);
+                        const fracoData = percentisData.map(p => p.percentil_fraco);
+                        const razoavelData = percentisData.map(p => p.percentil_razoavel);
+                        const bomData = percentisData.map(p => p.percentil_bom);
+                        const muitoBomData = percentisData.map(p => p.percentil_muito_bom);
+                        const excelenteData = percentisData.map(p => p.percentil_excelente);
+
+                        const desempenhoAlunoData = data.desempenho.map(test => ({
+                            x: parseFloat(test.age),
+                            y: test[exercicioKey] || 0
+                        }));
+
+                        const datasets = [
+                            { label: 'Fraco', data: fracoData, borderColor: 'red', fill: false, tension: 0.4 },
+                            { label: 'Razoável', data: razoavelData, borderColor: 'orange', fill: false, tension: 0.4 },
+                            { label: 'Bom', data: bomData, borderColor: 'yellow', fill: false, tension: 0.4 },
+                            { label: 'Muito Bom', data: muitoBomData, borderColor: 'green', fill: false, tension: 0.4 },
+                            { label: 'Excelente', data: excelenteData, borderColor: 'blue', fill: false, tension: 0.4 },
+                            {
+                                label: 'Desempenho do Aluno',
+                                data: desempenhoAlunoData,
+                                borderColor: 'purple',
+                                backgroundColor: 'purple',
+                                pointRadius: 5,
+                                showLine: false
+                            }
+                        ];
+
+                        const ctx = document.createElement('canvas');
+                        ctx.className = "col-12 col-md-6";
+                        document.getElementById('graficos-container').appendChild(ctx);
+
+                        new Chart(ctx, {
+                            type: 'line',
+                            data: { labels: idadeLabels, datasets: datasets },
+                            options: {
+                                responsive: true,
+                                plugins: {
+                                    title: { display: true, text: `Desempenho - ${apiExercicioKey}` }
                                 },
-                                {
-                                    label: 'Percentil Razoável',
-                                    data: percentilRazoavel,
-                                    borderColor: 'orange',
-                                    borderDash: [5, 5],
-                                    fill: false
-                                },
-                                {
-                                    label: 'Percentil Bom',
-                                    data: percentilBom,
-                                    borderColor: 'green',
-                                    borderDash: [5, 5],
-                                    fill: false
-                                },
-                                {
-                                    label: 'Percentil Muito Bom',
-                                    data: percentilMuitoBom,
-                                    borderColor: 'blue',
-                                    borderDash: [5, 5],
-                                    fill: false
-                                },
-                                {
-                                    label: 'Percentil Excelente',
-                                    data: percentilExcelente,
-                                    borderColor: 'purple',
-                                    borderDash: [5, 5],
-                                    fill: false
-                                }
-                            ]
-                        },
-                        options: {
-                            responsive: true,
-                            title: {
-                                display: true,
-                                text: `Gráfico de Percentis para ${exercicio}`
-                            },
-                            scales: {
-                                y: {
-                                    beginAtZero: true
-                                },
-                                x: {
-                                    title: {
-                                        display: true,
-                                        text: 'Idade'
-                                    }
+                                scales: {
+                                    x: { title: { display: true, text: 'Idade (Anos)' } },
+                                    y: { title: { display: true, text: 'Percentil' }, beginAtZero: true }
                                 }
                             }
-                        }
-                    });
-                } else {
-                    alert('Erro ao gerar o gráfico: ' + data.mensagem);
-                }
-            })
-            .catch(error => {
-                console.error('Erro ao solicitar gráfico:', error);
-                alert('Erro ao gerar gráfico. Consulte o console para mais detalhes.');
-            });
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao solicitar gráfico:', error);
+                });
+        }
+
+        gerarGrafico();
+
+        function capturarGraficos() {
+        const graficos = document.querySelectorAll('#graficos-container canvas');
+        const imagensBase64 = [];
+
+        graficos.forEach((grafico, index) => {
+            const imagemBase64 = grafico.toDataURL('image/png');
+            imagensBase64.push({ nome: `grafico-${index + 1}.png`, conteudo: imagemBase64 });
+        });
+
+        return imagensBase64;
     }
-</script>
+
+    function enviarGraficosParaPDF() {
+        const graficos = capturarGraficos();
+
+        fetch('/generate-pdf', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            },
+            body: JSON.stringify({ graficos })
+        })
+        .then(response => response.blob())
+        .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = 'graficos.pdf';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+        })
+        .catch(error => {
+            console.error('Erro ao gerar PDF:', error);
+        });
+    }
+    </script>
 </body>
 </html>

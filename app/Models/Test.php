@@ -10,7 +10,10 @@ class Test extends Model
     use HasFactory;
 
     protected $fillable = [
-        'student_id', // Certifique-se de que há uma coluna 'student_id' na tabela de testes para armazenar a referência ao aluno
+        'student_id',
+        'test_date', // Adicione este campo aqui
+        'age',
+        'battery_id',
         'height',
         'weight',
         'flexibility',

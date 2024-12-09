@@ -23,8 +23,7 @@ public function show(Student $student)
 }
 
 
-    public function create()
-{
+    public function create(){
     return view('students.create');
 }
 
