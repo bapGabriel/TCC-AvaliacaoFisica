@@ -12,10 +12,13 @@ use App\Http\Controllers\PdfController;
 
 Route::post('/generate-pdf', [PdfController::class, 'generatePdf']);
 
+Route::get('/students/{id}', [PerformanceController::class, 'showStudentPerformance']);
 
 Route::get('/student/{student}/performance/{exercise}', [PerformanceController::class, 'getStudentPerformance']);
 Route::get('/generate-chart/{student_id}/{exercicio}', [PerformanceController::class, 'gerarGrafico']);
 Route::get('/performance/percentis/{exercicio}/{sexo}', [PerformanceController::class, 'getPercentisByAge']);
+
+
 
 // Rota para landing page
 Route::get('/', function () {

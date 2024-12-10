@@ -21,8 +21,35 @@
     <!-- Main Content -->
     <main class="container my-5">
     <h2 class="text-center mb-4">Desempenho do Aluno: <strong class="text-primary">{{ $student->name }}</strong></h2>
+    <h5 class="text-center mb-4">Massa Corporal (kg): <strong class="text-primary">{{ $weight }}</strong></h5>
+    <h5 class="text-center mb-4">Estatura (mts): <strong class="text-primary">{{ $height }}</strong></h5>
     <p class="text-center text-muted">Acompanhe os resultados e veja como {{ $student->name }} está progredindo em diferentes métricas.</p>
     
+     <!-- Tabela de Resultados -->
+     <section class="mb-5">
+            <h4>Resultados</h4>
+            <table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Variável</th>
+            <th>Resultado</th>
+            <th>Classificação</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach ($resultados as $resultado)
+        <tr>
+            <td>{{ $resultado['variavel'] }}</td>
+            <td>{{ $resultado['resultado'] }}</td>
+            <td class="{{ $resultado['classificacao']['classificacao_cor'] }}">
+                {{ $resultado['classificacao']['classificacao'] }}
+            </td>
+        </tr>
+        @endforeach
+    </tbody>
+</table>
+
+</section>
 
     <!-- Gráficos -->
     <div id="graficos-container" class="row gy-4"></div>

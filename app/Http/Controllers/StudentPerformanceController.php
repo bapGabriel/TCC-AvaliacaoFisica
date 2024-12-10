@@ -4,9 +4,71 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Student;
+use App\Models\Percentis;
 
 class StudentPerformanceController extends Controller
 {
+    public function show($studentId)
+{
+    $student = Student::find($studentId);
+
+    if (!$student) {
+        return redirect()->back()->with('error', 'Aluno não encontrado.');
+    }
+
+    // Obtemos o teste mais recente do aluno
+    $latestTest = $student->tests()->latest('test_date')->first();
+
+    if (!$latestTest) {
+        return redirect()->back()->with('error', 'Nenhum teste disponível para o aluno.');
+    }
+
+    // Obter percentis agrupados por tipo de exercício
+    $percentis = Percentis::where('sexo', $student->gender)->get()->groupBy('tipo_exercicio');
+
+    // Mapeamento para resultados
+    $resultados = [
+        [
+            'variavel' => 'Flexibilidade',
+            'resultado' => $latestTest->flexibility,
+            'classificacao' => $this->getClassificacao($percentis['flexibilidade'], $latestTest->flexibility),
+        ],
+        [
+            'variavel' => 'Força Abdominal',
+            'resultado' => $latestTest->abdominals,
+            'classificacao' => $this->getClassificacao($percentis['abdominais'], $latestTest->abdominals),
+        ],
+        [
+            'variavel' => 'VO2 Máximo',
+            'resultado' => $latestTest->run_6min, // Ajuste conforme a métrica desejada
+            'classificacao' => $this->getClassificacao($percentis['corrida_6min'], $latestTest->run_6min),
+        ],
+        // Adicione outras variáveis de desempenho aqui
+    ];
+
+    return view('students.show', compact('student', 'resultados'));
+}
+
+/**
+ * Determina a classificação com base nos percentis
+ */
+private function getClassificacao($percentis, $valor)
+{
+    foreach ($percentis as $p) {
+        if ($valor < $p->percentil_fraco) {
+            return ['classificacao' => 'Fraco', 'classificacao_cor' => 'text-danger'];
+        } elseif ($valor < $p->percentil_razoavel) {
+            return ['classificacao' => 'Razoável', 'classificacao_cor' => 'text-warning'];
+        } elseif ($valor < $p->percentil_bom) {
+            return ['classificacao' => 'Bom', 'classificacao_cor' => 'text-primary'];
+        } elseif ($valor < $p->percentil_muito_bom) {
+            return ['classificacao' => 'Muito Bom', 'classificacao_cor' => 'text-success'];
+        }
+    }
+
+    return ['classificacao' => 'Excelente', 'classificacao_cor' => 'text-success'];
+}
+
     public function showPerformance($id)
     {
         // Buscar o estudante específico

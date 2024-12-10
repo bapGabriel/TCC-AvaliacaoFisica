@@ -11,19 +11,19 @@ class Test extends Model
 
     protected $fillable = [
         'student_id',
-        'test_date', // Adicione este campo aqui
+        'test_date',
         'age',
-        'battery_id',
-        'height',
-        'weight',
-        'flexibility',
         'abdominals',
+        'flexibility',
         'run_6min',
         'medicine_ball',
         'horizontal_jump',
         'square_run',
         'run_20m',
+        'weight', // Certifique-se de que estes campos estão no array
+        'height'
     ];
+    
 
     // Relação com o aluno
     public function student()
