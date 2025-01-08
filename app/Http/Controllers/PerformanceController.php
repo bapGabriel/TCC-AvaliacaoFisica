@@ -11,69 +11,80 @@ use Carbon\Carbon;
 
 class PerformanceController extends Controller
 {
-    
     public function showStudentPerformance($studentId)
 {
+    // Recupera o estudante
     $student = Student::find($studentId);
 
     if (!$student) {
         return redirect()->back()->with('error', 'Aluno não encontrado.');
     }
 
+    // Recupera o último teste do estudante
     $latestTest = $student->tests()->latest('test_date')->first();
 
+    // Verifica se há um teste mais recente
     if (!$latestTest) {
-        return redirect()->back()->with('error', 'Nenhum teste disponível para o aluno.');
+        $resultados = []; // Sem resultados
+        $weight = 'Não disponível';
+        $height = 'Não disponível';
+
+        return view('students.show', compact('student', 'resultados', 'weight', 'height'));
     }
 
+    // Recupera os percentis agrupados pelo tipo de exercício
     $percentis = Percentis::where('sexo', $student->gender)->get()->groupBy('tipo_exercicio');
 
-    // Mapeamento para resultados
+    // Define o peso e altura
+    $weight = $latestTest->weight ?? 'Não disponível';
+    $height = $latestTest->height ?? 'Não disponível';
+
+    // Preenche os resultados baseados no último teste
     $resultados = [
         [
             'variavel' => 'Flexibilidade',
             'resultado' => $latestTest->flexibility,
-            'classificacao' => $this->getClassificacao($percentis['flexibilidade'] ?? [], $latestTest->flexibility),
+            'classificacao' => $this->getClassificacao($percentis['flexibilidade'] ?? [], $latestTest->flexibility, 'flexibilidade'),
         ],
         [
             'variavel' => 'Força Abdominal',
             'resultado' => $latestTest->abdominals,
-            'classificacao' => $this->getClassificacao($percentis['abdominais'] ?? [], $latestTest->abdominals),
+            'classificacao' => $this->getClassificacao($percentis['abdominais'] ?? [], $latestTest->abdominals, 'abdominais'),
         ],
         [
             'variavel' => 'Aptidão Cardiorrespiratória',
             'resultado' => $latestTest->run_6min,
-            'classificacao' => $this->getClassificacao($percentis['corrida_6min'] ?? [], $latestTest->run_6min),
+            'classificacao' => $this->getClassificacao($percentis['corrida_6min'] ?? [], $latestTest->run_6min, 'corrida_6min'),
         ],
         [
             'variavel' => 'Força Membros Superiores',
             'resultado' => $latestTest->medicine_ball,
-            'classificacao' => $this->getClassificacao($percentis['medicine_ball'] ?? [], $latestTest->medicine_ball),
+            'classificacao' => $this->getClassificacao($percentis['medicine_ball'] ?? [], $latestTest->medicine_ball, 'medicine_ball'),
         ],
         [
             'variavel' => 'Força Membros Inferiores',
             'resultado' => $latestTest->horizontal_jump,
-            'classificacao' => $this->getClassificacao($percentis['salto_horizontal'] ?? [], $latestTest->horizontal_jump),
+            'classificacao' => $this->getClassificacao($percentis['salto_horizontal'] ?? [], $latestTest->horizontal_jump, 'salto_horizontal'),
         ],
         [
             'variavel' => 'Agilidade',
             'resultado' => $latestTest->square_run,
-            'classificacao' => $this->getClassificacao($percentis['quadrado'] ?? [], $latestTest->square_run),
+            'classificacao' => $this->getClassificacao($percentis['corrida_no_quadrado'] ?? [], $latestTest->square_run, 'corrida_no_quadrado'),
         ],
         [
             'variavel' => 'Velocidade',
             'resultado' => $latestTest->run_20m,
-            'classificacao' => $this->getClassificacao($percentis['corrida_20m'] ?? [], $latestTest->run_20m),
+            'classificacao' => $this->getClassificacao($percentis['corrida_20_metros'] ?? [], $latestTest->run_20m, 'corrida_20_metros'),
         ],
-    ];    
+    ];
 
     $latestTest = $student->tests()->latest('test_date')->first();
 
 if ($latestTest) {
-    $weight = $latestTest->weight; // Extrair peso
-    $height = $latestTest->height; // Extrair altura
+    $weight = $latestTest->weight; 
+    $height = $latestTest->height; 
 } else {
-    $weight = null; // Caso nenhum teste seja encontrado
+    $weight = null; 
     $height = null;
 }
 
@@ -84,25 +95,43 @@ return view('students.show', compact('student', 'resultados', 'weight', 'height'
 /**
  * Determina a classificação com base nos percentis
  */
-private function getClassificacao($percentis, $valor)
+private function getClassificacao($percentis, $valor, $tipo = null)
 {
+    Log::info('Classificação:', ['percentis' => $percentis, 'valor' => $valor, 'tipo' => $tipo]);
+
     if (empty($percentis)) {
         return ['classificacao' => 'Dados não disponíveis', 'classificacao_cor' => 'text-muted'];
     }
 
-    foreach ($percentis as $p) {
-        if ($valor < $p->percentil_fraco) {
-            return ['classificacao' => 'Fraco', 'classificacao_cor' => 'text-danger'];
-        } elseif ($valor < $p->percentil_razoavel) {
-            return ['classificacao' => 'Razoável', 'classificacao_cor' => 'text-warning'];
-        } elseif ($valor < $p->percentil_bom) {
-            return ['classificacao' => 'Bom', 'classificacao_cor' => 'text-primary'];
-        } elseif ($valor < $p->percentil_muito_bom) {
-            return ['classificacao' => 'Muito Bom', 'classificacao_cor' => 'text-success'];
+    if (in_array($tipo, ['corrida_no_quadrado', 'corrida_20_metros'])) {
+        // Para variáveis em que menor é melhor (como corridas)
+        foreach ($percentis as $p) {
+            if ($valor > $p->percentil_fraco) {
+                return ['classificacao' => 'Fraco', 'classificacao_cor' => 'text-danger'];
+            } elseif ($valor > $p->percentil_razoavel) {
+                return ['classificacao' => 'Razoável', 'classificacao_cor' => 'text-warning'];
+            } elseif ($valor > $p->percentil_bom) {
+                return ['classificacao' => 'Bom', 'classificacao_cor' => 'text-success'];
+            } elseif ($valor > $p->percentil_muito_bom) {
+                return ['classificacao' => 'Muito Bom', 'classificacao_cor' => 'text-info'];
+            }
         }
+        return ['classificacao' => 'Excelente', 'classificacao_cor' => 'text-primary'];
+    } else {
+        // Para variáveis em que maior é melhor (padrão)
+        foreach ($percentis as $p) {
+            if ($valor < $p->percentil_fraco) {
+                return ['classificacao' => 'Fraco', 'classificacao_cor' => 'text-danger'];
+            } elseif ($valor < $p->percentil_razoavel) {
+                return ['classificacao' => 'Razoável', 'classificacao_cor' => 'text-warning'];
+            } elseif ($valor < $p->percentil_bom) {
+                return ['classificacao' => 'Bom', 'classificacao_cor' => 'text-success'];
+            } elseif ($valor < $p->percentil_muito_bom) {
+                return ['classificacao' => 'Muito Bom', 'classificacao_cor' => 'text-info'];
+            }
+        }
+        return ['classificacao' => 'Excelente', 'classificacao_cor' => 'text-primary'];
     }
-
-    return ['classificacao' => 'Excelente', 'classificacao_cor' => 'text-success'];
 }
 
 

@@ -35,16 +35,22 @@ return [
     
    'pdf' => [
     'enabled' => true,
-    'binary' => 'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe', // Altere para o caminho do seu sistema
+    'binary' => env('SNAPPY_PDF_BINARY', 'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'),
     'timeout' => false,
-    'options' => [],
+    'options' => [
+        'enable-javascript' => true,
+        'javascript-delay' => 5000,
+        'no-stop-slow-scripts' => true,
+        'viewport-size' => '1280x1024',
+    ],
     'env' => [],
 ],
+
 
     
     'image' => [
         'enabled' => true,
-        'binary'  => env('WKHTML_IMG_BINARY', '/usr/local/bin/wkhtmltoimage'),
+        'binary' => env('WKHTMLTOPDF_BINARY', '/usr/local/bin/wkhtmltopdf'),
         'timeout' => false,
         'options' => [],
         'env'     => [],

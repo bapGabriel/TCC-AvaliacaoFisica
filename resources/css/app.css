@@ -85,3 +85,21 @@ footer a {
 footer a:hover {
     color: #2B6CB0;
 }
+
+
+.text-razoavel {
+    color: #FFA500; /* Laranja */
+}
+
+.text-bom {
+    color: #FFD700; /* Amarelo */
+}
+
+.text-muito-bom {
+    color: #28a745; /* Verde */
+}
+
+.text-excellent {
+    color: #003366; /* Azul mais escuro */
+    font-weight: bold; /* Destaque */
+}

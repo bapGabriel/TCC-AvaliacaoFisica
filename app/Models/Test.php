@@ -20,7 +20,7 @@ class Test extends Model
         'horizontal_jump',
         'square_run',
         'run_20m',
-        'weight', // Certifique-se de que estes campos estão no array
+        'weight', 
         'height'
     ];
     

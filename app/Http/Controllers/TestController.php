@@ -59,7 +59,9 @@ class TestController extends Controller
     ]);
 
     // Redireciona com uma mensagem de sucesso
-    return redirect()->route('students.index')->with('success', 'Teste adicionado com sucesso!');
+    return redirect()->route('students.show', ['student' => $student->id])
+                     ->with('success', 'Teste adicionado com sucesso!');
+                
 }
 
 }

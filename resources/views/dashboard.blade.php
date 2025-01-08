@@ -30,8 +30,8 @@
                 <h3 class="h5 mb-0">Gerenciamento de Alunos</h3>
             </div>
             <div class="card-body">
-                <a href="{{ route('students.create') }}" class="btn btn-success mb-3">Adicionar Novo Aluno</a>
-                <h4 class="h6 text-secondary mb-3">Alunos Cadastrados</h4>
+            <a href="{{ route('students.create') }}" class="btn btn-success mb-3">Adicionar Novo Aluno</a>
+            <h4 class="h6 text-secondary mb-3">Alunos Cadastrados</h4>
                 <ul class="list-group">
                     @foreach ($students as $student)
                         <li class="list-group-item d-flex justify-content-between align-items-center">

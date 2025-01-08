@@ -15,16 +15,19 @@
             <h1 class="h5 mb-0">Desempenho do Aluno</h1>
             <button onclick="window.location.href='/dashboard'" class="btn btn-outline-light">Voltar ao Dashboard</button>
             <button onclick="enviarGraficosParaPDF()" id="export-pdf" class="btn btn-warning ms-2">Gerar PDF</button>
-        </div>
+            </div>
     </header>
 
     <!-- Main Content -->
     <main class="container my-5">
     <h2 class="text-center mb-4">Desempenho do Aluno: <strong class="text-primary">{{ $student->name }}</strong></h2>
-    <h5 class="text-center mb-4">Massa Corporal (kg): <strong class="text-primary">{{ $weight }}</strong></h5>
-    <h5 class="text-center mb-4">Estatura (mts): <strong class="text-primary">{{ $height }}</strong></h5>
-    <p class="text-center text-muted">Acompanhe os resultados e veja como {{ $student->name }} está progredindo em diferentes métricas.</p>
-    
+    <h5 class="text-center mb-4">Massa Corporal (kg): <strong class="text-primary">{{ $weight ?? 'Não disponível' }}</strong></h5>
+    <h5 class="text-center mb-4">Estatura (mts): <strong class="text-primary">{{ $height ?? 'Não disponível' }}</strong></h5>
+    <h5 class="text-center mb-4">IMC: 
+        <strong class="text-primary">
+            {{ number_format($weight / (pow($height / 100, 2)), 2) }}
+        </strong>
+    </h5>
      <!-- Tabela de Resultados -->
      <section class="mb-5">
             <h4>Resultados</h4>
@@ -37,16 +40,23 @@
         </tr>
     </thead>
     <tbody>
+    @if(isset($resultados) && count($resultados) > 0)
         @foreach ($resultados as $resultado)
         <tr>
             <td>{{ $resultado['variavel'] }}</td>
-            <td>{{ $resultado['resultado'] }}</td>
+            <td>{{ $resultado['resultado'] ?? 'Não disponível' }}</td>
             <td class="{{ $resultado['classificacao']['classificacao_cor'] }}">
                 {{ $resultado['classificacao']['classificacao'] }}
             </td>
         </tr>
         @endforeach
-    </tbody>
+    @else
+        <tr>
+            <td colspan="3" class="text-center">Nenhum resultado disponível.</td>
+        </tr>
+    @endif
+</tbody>
+
 </table>
 
 </section>
@@ -113,8 +123,8 @@
                         const datasets = [
                             { label: 'Fraco', data: fracoData, borderColor: 'red', fill: false, tension: 0.4 },
                             { label: 'Razoável', data: razoavelData, borderColor: 'orange', fill: false, tension: 0.4 },
-                            { label: 'Bom', data: bomData, borderColor: 'yellow', fill: false, tension: 0.4 },
-                            { label: 'Muito Bom', data: muitoBomData, borderColor: 'green', fill: false, tension: 0.4 },
+                            { label: 'Bom', data: bomData, borderColor: 'green', fill: false, tension: 0.4 },
+                            { label: 'Muito Bom', data: muitoBomData, borderColor: 'lightblue', fill: false, tension: 0.4 },
                             { label: 'Excelente', data: excelenteData, borderColor: 'blue', fill: false, tension: 0.4 },
                             {
                                 label: 'Desempenho do Aluno',
@@ -166,31 +176,39 @@
     }
 
     function enviarGraficosParaPDF() {
-        const graficos = capturarGraficos();
+    // Obtenha os dados do aluno e resultados como strings JSON diretamente
+    const student = JSON.parse(`{!! json_encode(['name' => $student->name, 'weight' => $weight ?? null, 'height' => $height ?? null]) !!}`);
+    const resultados = JSON.parse(`{!! json_encode($resultados ?? []) !!}`);
 
-        fetch('/generate-pdf', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-            },
-            body: JSON.stringify({ graficos })
-        })
-        .then(response => response.blob())
-        .then(blob => {
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.style.display = 'none';
-            a.href = url;
-            a.download = 'graficos.pdf';
-            document.body.appendChild(a);
-            a.click();
-            window.URL.revokeObjectURL(url);
-        })
-        .catch(error => {
-            console.error('Erro ao gerar PDF:', error);
-        });
-    }
+    fetch('/generate-pdf', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: JSON.stringify({ student, resultados }) // Envia os dados para o backend
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Erro ao gerar PDF');
+        }
+        return response.blob();
+    })
+    .then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = 'desempenho-aluno.pdf';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+    });
+}
+
     </script>
 </body>
 </html>
