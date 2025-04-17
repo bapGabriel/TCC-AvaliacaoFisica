@@ -4,22 +4,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Adicionar Teste para {{ $student->name }}</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
+    <!-- Google Fonts - Lato -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- CSS do projeto -->
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 </head>
-<body class="bg-light">
-    <!-- Header -->
-    <header class="bg-dark text-white py-3">
-        <div class="container d-flex justify-content-between align-items-center">
-            <h1 class="h5">Projeto TCC</h1>
-            <a href="{{ route('dashboard') }}" class="btn btn-outline-light btn-sm">Voltar</a>
+<body class="bg-secondary-color">
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg bg-primary-color border-bottom" id="navbar">
+        <div class="container py-3 d-flex justify-content-between align-items-center">
+            <a href="/" class="navbar-brand primary-color d-flex align-items-center">
+                <img src="{{ asset('img/tcc-icon.png') }}" alt="TCC" style="height: 40px;">
+                <span class="ms-2">TCC</span>
+            </a>
+            <a href="{{ route('dashboard') }}" class="btn btn-sm btn-outline-dark">Voltar</a>
         </div>
-    </header>
+    </nav>
 
     <!-- Main Content -->
     <main class="container py-5">
-        <div class="card shadow mx-auto" style="max-width: 600px;">
-            <div class="card-header bg-primary text-white">
-                <h2 class="h5 mb-0 text-center">Adicionar Teste para {{ $student->name }}</h2>
+        <div class="card shadow-sm border-0 mx-auto" style="max-width: 700px;">
+            <div class="card-header bg-dark text-white text-center">
+                <h2 class="h5 mb-0">Adicionar Teste para {{ $student->name }}</h2>
             </div>
             <div class="card-body">
                 <form method="POST" action="{{ route('tests.store', $student->id) }}">
@@ -86,8 +103,8 @@
                     </div>
 
                     <!-- Botão de Enviar -->
-                    <div class="text-center">
-                        <button type="submit" class="btn btn-success w-100">Adicionar Teste</button>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-dark">Adicionar Teste</button>
                     </div>
                 </form>
             </div>

@@ -4,66 +4,87 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Desempenho do Aluno: {{ $student->name }}</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
+    <!-- Google Fonts - Lato -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- CSS do projeto -->
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+
 </head>
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <body class="d-flex flex-column min-vh-100 bg-light">
-    <!-- Header -->
-    <header class="bg-dark text-white py-3">
-        <div class="container d-flex justify-content-between align-items-center">
-            <h1 class="h5 mb-0">Desempenho do Aluno</h1>
-            <button onclick="window.location.href='/dashboard'" class="btn btn-outline-light">Voltar ao Dashboard</button>
-            <button onclick="enviarGraficosParaPDF()" id="export-pdf" class="btn btn-warning ms-2">Gerar PDF</button>
+
+   <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg bg-primary-color border-bottom" id="navbar">
+        <div class="container py-3 d-flex justify-content-between align-items-center">
+            <a href="/" class="navbar-brand primary-color d-flex align-items-center">
+                <img src="{{ asset('img/tcc-icon.png') }}" alt="TCC" style="height: 40px;">
+                <span class="ms-2">TCC</span>
+            </a>
+            <div>
+                <a href="{{ route('dashboard') }}" class="btn btn-sm btn-outline-dark me-2">Voltar</a>
+                <button onclick="enviarGraficosParaPDF()" id="export-pdf" class="btn btn-sm btn-warning">Gerar PDF</button>
             </div>
-    </header>
+        </div>
+    </nav>
 
     <!-- Main Content -->
     <main class="container my-5">
-    <h2 class="text-center mb-4">Desempenho do Aluno: <strong class="text-primary">{{ $student->name }}</strong></h2>
-    <h5 class="text-center mb-4">Massa Corporal (kg): <strong class="text-primary">{{ $weight ?? 'Não disponível' }}</strong></h5>
-    <h5 class="text-center mb-4">Estatura (mts): <strong class="text-primary">{{ $height ?? 'Não disponível' }}</strong></h5>
-    <h5 class="text-center mb-4">IMC: 
-        <strong class="text-primary">
-            {{ number_format($weight / (pow($height / 100, 2)), 2) }}
-        </strong>
-    </h5>
-     <!-- Tabela de Resultados -->
-     <section class="mb-5">
-            <h4>Resultados</h4>
-            <table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Variável</th>
-            <th>Resultado</th>
-            <th>Classificação</th>
-        </tr>
-    </thead>
-    <tbody>
-    @if(isset($resultados) && count($resultados) > 0)
-        @foreach ($resultados as $resultado)
-        <tr>
-            <td>{{ $resultado['variavel'] }}</td>
-            <td>{{ $resultado['resultado'] ?? 'Não disponível' }}</td>
-            <td class="{{ $resultado['classificacao']['classificacao_cor'] }}">
-                {{ $resultado['classificacao']['classificacao'] }}
-            </td>
-        </tr>
-        @endforeach
-    @else
-        <tr>
-            <td colspan="3" class="text-center">Nenhum resultado disponível.</td>
-        </tr>
-    @endif
-</tbody>
+        <h2 class="text-center mb-4 primary-color">Desempenho do Aluno: <strong>{{ $student->name }}</strong></h2>
+        <h5 class="text-center mb-3 secondary-color">Massa Corporal (kg): <strong>{{ $weight ?? 'Não disponível' }}</strong></h5>
+        <h5 class="text-center mb-3 secondary-color">Estatura (mts): <strong>{{ $height ?? 'Não disponível' }}</strong></h5>
+        <h5 class="text-center mb-4 secondary-color">IMC: 
+            <strong class="primary-color">
+                {{ number_format($weight / (pow($height / 100, 2)), 2) }}
+            </strong>
+        </h5>
 
-</table>
+        <!-- Tabela de Resultados -->
+        <section class="mb-5">
+            <h4 class="primary-color">Resultados</h4>
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Variável</th>
+                        <th>Resultado</th>
+                        <th>Classificação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if(isset($resultados) && count($resultados) > 0)
+                        @foreach ($resultados as $resultado)
+                            <tr>
+                                <td>{{ $resultado['variavel'] }}</td>
+                                <td>{{ $resultado['resultado'] ?? 'Não disponível' }}</td>
+                                <td class="{{ $resultado['classificacao']['classificacao_cor'] }}">
+                                    {{ $resultado['classificacao']['classificacao'] }}
+                                </td>
+                            </tr>
+                        @endforeach
+                    @else
+                        <tr>
+                            <td colspan="3" class="text-center">Nenhum resultado disponível.</td>
+                        </tr>
+                    @endif
+                </tbody>
+            </table>
+        </section>
 
-</section>
-
-    <!-- Gráficos -->
-    <div id="graficos-container" class="row gy-4"></div>
-</main>
+        <!-- Gráficos -->
+        <div id="graficos-container" class="row gy-4"></div>
+    </main>
 
 
     <!-- Footer -->

@@ -1,0 +1,276 @@
+ * {
+    font-family: 'Lato', sans-serif;
+ }
+ 
+ .bg-primary-color {
+    background-color: #FFF;
+ }
+
+ .bg-secondary-color {
+    background-color: #ece8ea;
+ }
+
+ .bg-dark-color {
+    background-color: #050505;
+ }
+
+.primary-color{
+    color: #050505;
+}
+
+.secondary-color{
+    color: #7a7a7a
+}
+
+/* Navbar */
+
+#navbar {
+    border-bottom: 1px solid #7a7a7a;
+}
+
+#navbar a:hover {
+    color: #7a7a7a;
+}
+
+#navbar a.active{
+    border-bottom: 1px solid #050505;
+}
+
+.navbar-brand {
+    display: flex;
+}
+
+.navbar-brand img {
+    width: 40px;
+}
+
+.navbar-brand span {
+    font-weight: 700;
+    font-size: 1.5em;
+    margin-left: 0.5em;
+}
+
+#navbar-items .navbar-nav {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+#navbar-items .nav-item {
+    margin: 0 1em;
+
+}
+
+/* SLIDER */
+#slider {
+    margin-top: 8em;
+    margin-bottom: 1em;
+}
+
+#slider .carousel-caption {
+    bottom: 3em;
+}
+
+#slider .carousel-caption h5 {
+    font-size: 2.5em;
+    text-shadow: #000 2px 2px;
+}
+
+.btn {
+    border-radius: 0;
+}
+
+#slider .btn {
+    padding: 0.3 0.8em;
+    font-size: 1em;
+    margin-top: 1em; 
+}
+
+.carousel-control-prev i,
+.carousel-control-next i {
+    color: #111;
+    font-size: 3em;
+}
+
+.carousel-indicators [data-bs-target] {
+    background-color: #222;
+    opacity: 0.8;
+}
+
+.carousel-indicators .active {
+    background-color: #000;
+}
+
+@media (min-width: 768px) {
+    #slider .carousel-caption {
+        bottom: 15em;
+    }
+    #slider .carousel-caption h5 {
+        font-size: 4em;
+        text-shadow: #000 2px 3px;
+    }
+    #slider .btn {
+        padding: 0.6 1.6em;
+        font-size: 1.2em;
+        margin-top: 1em; 
+    }
+    .carousel-indicators{
+        bottom: 7em;
+    }
+}
+
+/* MINI BANNERS */
+#mini-banners {
+    margin-bottom: 4em;
+}
+
+#mini-banners .card {
+    padding: 2em 0.3em;
+    border-radius: 0;
+    margin-bottom: 1em;
+}
+
+#mini-banners i {
+    font-size: 4em;
+}
+
+#mini-banners .card-title {
+    margin-bottom: 1.5em;
+}
+
+#mini-banners .btn{
+    margin-top: 1.5em;
+    padding: 0.6em 1.2em;
+}
+
+@media (min-width: 768px) {
+   #mini-banners {
+        margin-top: -6em;
+    }
+}
+
+/* DESTAQUES */
+#featured-container {
+    margin-bottom: 4em;
+}
+
+.title {
+    font-size: 1.75em;
+    margin-bottom: 0.4em;
+    position: relative;
+}
+
+.title::before {
+    width: 75px;
+    border-top: 4px solid #7a7a7a;
+    content: '';
+    position: absolute;
+    bottom: 2em;
+}
+ /*@import "bootstrap/dist/css/bootstrap.min.css";
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.header {
+    background-color: #38A169;
+    color: white;
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.header h1 {
+    font-size: 3rem;
+    margin: 0;
+    font-weight: bold;
+}
+
+.header p {
+    font-size: 1.25rem;
+    margin-top: 10px;
+}
+
+.btn-primary {
+    display: inline-block;
+    padding: 12px 24px;
+    background-color: #F56565;
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 25px;
+    transition: background-color 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: #E53E3E;
+}
+
+section {
+    padding: 40px 20px;
+    text-align: center;
+}
+
+section h2, section h3 {
+    font-size: 2rem;
+    color: #2D3748;
+}
+
+section p, section ul {
+    color: #4A5568;
+}
+
+section ul {
+    list-style: none;
+    padding: 0;
+}
+
+section ul li {
+    display: flex;
+    align-items: center;
+    font-size: 1rem;
+    color: #4A5568;
+}
+
+section ul li span {
+    font-size: 1.5rem;
+    color: #38A169;
+    margin-right: 10px;
+}
+
+footer {
+    background-color: #EDF2F7;
+    color: #718096;
+    padding: 20px 0;
+}
+
+footer a {
+    color: #3182CE;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+footer a:hover {
+    color: #2B6CB0;
+}
+
+/* 
+.text-razoavel {
+    color: #FFA500; 
+}
+
+.text-bom {
+    color: #FFD700; 
+}
+
+.text-muito-bom {
+    color: #28a745; 
+}
+
+.text-excellent {
+    color: #003366; 
+    font-weight: bold; 
+} */

@@ -8,6 +8,9 @@ use App\Http\Controllers\PerformanceController;
 use App\Http\Controllers\PdfController;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/students/create', [StudentController::class, 'create'])->name('students.create');
+
+
 // Rota para gerar PDF
 Route::post('/generate-pdf', [PdfController::class, 'gerarPDF']);
 Route::get('/students/{student}', [PerformanceController::class, 'showStudentPerformance'])->name('students.show');
@@ -35,7 +38,9 @@ Route::middleware('auth')->group(function () {
 
     // Rotas para alunos (StudentController)
     Route::get('/students', [StudentController::class, 'index'])->name('students.index');
-    Route::get('/students/create', [StudentController::class, 'create'])->name('students.create');
+
+    //
+
     Route::post('/students', [StudentController::class, 'store'])->name('students.store');
     Route::get('/students/show/{student}', [StudentController::class, 'show'])->name('students.student.show');
 
@@ -48,9 +53,10 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::get('/students/{student}', [PerformanceController::class, 'showStudentPerformance'])->name('students.show');
-
+    // 👇 Essa rota deve vir por último
+    // Route::get('/students/{student}', [PerformanceController::class, 'showStudentPerformance'])->name('students.show');
 });
+
 
 // Autenticação
 require __DIR__.'/auth.php';
