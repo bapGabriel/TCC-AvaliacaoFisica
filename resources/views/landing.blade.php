@@ -28,7 +28,7 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg fixed-top bg-primary-color" id="navbar">
         <div class="container py-3">
-            <a href="#" class="navbar-brand primary-color">
+            <a href="/" class="navbar-brand primary-color">
             <img src="{{ asset('img/tcc-icon.png') }}" alt="TCC">
             <span>TCC</span>
             </a>
@@ -46,18 +46,18 @@
             <div class="collapse navbar-collapse" id="navbar-items">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a href="#" 
+                        <a href="/" 
                         class="nav-link active primary-color" 
                         aria-current="page">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link primary-color">Projetos</a>
+                        <a href="/projects" class="nav-link primary-color">Projetos</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link primary-color">Sobre</a>
+                        <a href="/about" class="nav-link primary-color">Sobre</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link primary-color">Contatos</a>
+                        <a href="/contacts" class="nav-link primary-color">Contatos</a>
                     </li>
                 </ul>
                 <div class="d-flex gap-2">

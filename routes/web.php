@@ -31,6 +31,19 @@ Route::get('/', function () {
     return view('landing');
 });
 
+// Rotas para outras páginas
+Route::get('/projects', function () {
+    return view('projects');
+})->name('projects');
+
+Route::get('/about', function () {
+    return view('about');
+})->name('about');
+
+Route::get('/contacts', function () {
+    return view('contacts');
+})->name('contacts');
+
 // Grupo protegido por autenticação
 Route::middleware('auth')->group(function () {
     // Dashboard
