@@ -1,12 +1,23 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+use Laravel\Socialite\Facades\Socialite;
+
+use App\Http\Controllers\SocialAuthController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PerformanceController;
 use App\Http\Controllers\PdfController;
-use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| Autenticação via Google
+|--------------------------------------------------------------------------
+*/
+Route::get('auth/google', [SocialAuthController::class, 'redirectToGoogle'])->name('google.login');
+Route::get('auth/google/callback', [SocialAuthController::class, 'handleGoogleCallback']);
 
 Route::get('/students/create', [StudentController::class, 'create'])->name('students.create');
 
@@ -70,6 +81,9 @@ Route::middleware('auth')->group(function () {
     // Route::get('/students/{student}', [PerformanceController::class, 'showStudentPerformance'])->name('students.show');
 });
 
-
-// Autenticação
+/*
+|--------------------------------------------------------------------------
+| Autenticação Padrão do Laravel
+|--------------------------------------------------------------------------
+*/
 require __DIR__.'/auth.php';

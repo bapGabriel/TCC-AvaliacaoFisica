@@ -71,6 +71,10 @@
                             <button type="submit" class="btn btn-dark w-100">Entrar</button>
                         </div>
                     </form>
+                    <a href="{{ route('google.login') }}" class="btn btn-danger w-100 mt-3">
+    <i class="bi bi-google"></i> Entrar com Google
+</a>
+
                     <p class="text-center mt-3">Não tem uma conta? 
                         <a href="{{ route('register') }}" class="primary-color text-decoration-underline">Registre-se</a>
                     </p>
