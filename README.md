@@ -1,4 +1,4 @@
-# 🏃‍♂️ Sistema de Avaliação Física Escolar
+# 🏃‍♂️ Sistema de Avaliação Física
 
 Este projeto é uma aplicação web desenvolvida com **Laravel** que permite gerenciar alunos, registrar testes físicos e visualizar a evolução através de gráficos.
 
