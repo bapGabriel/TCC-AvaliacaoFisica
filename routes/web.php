@@ -17,13 +17,13 @@ use App\Http\Controllers\PdfController;
 |--------------------------------------------------------------------------
 */
 Route::get('auth/google', [SocialAuthController::class, 'redirectToGoogle'])->name('google.login');
-Route::get('auth/google/callback', [SocialAuthController::class, 'handleGoogleCallback']);
+Route::get('auth/google/callback', [SocialAuthController::class, 'handleGoogleCallback'])->name('google.callback');
 
 Route::get('/students/create', [StudentController::class, 'create'])->name('students.create');
 
 
 // Rota para gerar PDF
-Route::post('/generate-pdf', [PdfController::class, 'gerarPDF']);
+Route::post('/generate-pdf', [PdfController::class, 'gerarPDF'])->name('pdf.create');
 Route::get('/students/{student}', [PerformanceController::class, 'showStudentPerformance'])->name('students.show');
 Route::get('/students/{student}/performance', [PerformanceController::class, 'showStudentPerformance'])->name('students.performance.show');
 
@@ -32,15 +32,15 @@ Route::get('/students/{student}/performance', [PerformanceController::class, 'sh
 Route::get('/students/show/{student}', [StudentController::class, 'show'])->name('students.show');
 
 Route::get('/students/{id}/performance', [PerformanceController::class, 'showStudentPerformance'])->name('students.performance');
-Route::get('/student/{student}/performance/{exercise}', [PerformanceController::class, 'getStudentPerformance']);
-Route::get('/generate-chart/{student_id}/{exercicio}', [PerformanceController::class, 'gerarGrafico']);
-Route::get('/performance/percentis/{exercicio}/{sexo}', [PerformanceController::class, 'getPercentisByAge']);
-Route::get('/api/performance/student/{student_id}/all', [PerformanceController::class, 'getStudentAllPerformance']);
+Route::get('/student/{student}/performance/{exercise}', [PerformanceController::class, 'getStudentPerformance'])->name('students.performance.exercise');
+Route::get('/generate-chart/{student_id}/{exercicio}', [PerformanceController::class, 'gerarGrafico'])->name('students.performance.chart');
+Route::get('/performance/percentis/{exercicio}/{sexo}', [PerformanceController::class, 'getPercentisByAge'])->name('students.performance.percentis');
+Route::get('/api/performance/student/{student_id}/all', [PerformanceController::class, 'getStudentAllPerformance'])->name('students.performance.all');
 
 // Rota para a landing page
 Route::get('/', function () {
     return view('landing');
-});
+})->name('home');
 
 // Rotas para outras páginas
 Route::get('/projects', function () {
