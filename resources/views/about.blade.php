@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bem-vindo - Projeto TCC</title>
-    <link ler="shortcut icon" href="img/favicon.ico" type="image/x-icon"/>
+    <link ler="shortcut icon" href="{{ asset('img/favicon.ico')}}" type="image/x-icon"/>
     <!-- Google Fonts - Lato -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -28,7 +28,7 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg fixed-top bg-primary-color" id="navbar">
         <div class="container py-3">
-            <a href="/" class="navbar-brand primary-color">
+            <a href="{{ route('home') }}" class="navbar-brand primary-color">
             <img src="{{ asset('img/tcc-icon.png') }}" alt="TCC">
             <span>TCC</span>
             </a>
@@ -46,23 +46,23 @@
             <div class="collapse navbar-collapse" id="navbar-items">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a href="/" 
+                        <a href="{{ route('home') }}" 
                         class="nav-link primary-color" 
                         aria-current="page">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a href="/projects" class="nav-link primary-color">Projetos</a>
+                        <a href="{{ route('projects') }}" class="nav-link primary-color">Projetos</a>
                     </li>
                     <li class="nav-item">
-                        <a href="/about" class="nav-link active primary-color">Sobre</a>
+                        <a href="{{ route('about') }}" class="nav-link active primary-color">Sobre</a>
                     </li>
                     <li class="nav-item">
-                        <a href="/contacts" class="nav-link primary-color">Contatos</a>
+                        <a href="{{ route('contacts') }}" class="nav-link primary-color">Contatos</a>
                     </li>
                 </ul>
                 <div class="d-flex gap-2">
-                    <a href="/login" class="btn btn-outline-dark btn-sm">Login</a>
-                    <a href="/register" class="btn btn-dark btn-sm">Registrar</a>
+                    <a href="{{ route('login') }}" class="btn btn-outline-dark btn-sm">Login</a>
+                    <a href="{{ route('register') }}" class="btn btn-dark btn-sm">Registrar</a>
                 </div>
             </div>
         </div>
