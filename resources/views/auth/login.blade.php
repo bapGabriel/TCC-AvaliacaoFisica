@@ -24,7 +24,7 @@
     <!-- Navbar igual à landing -->
     <nav class="navbar navbar-expand-lg fixed-top bg-primary-color" id="navbar">
         <div class="container py-3">
-            <a href="/" class="navbar-brand primary-color">
+            <a href="{{ route('home') }}" class="navbar-brand primary-color">
                 <img src="{{ asset('img/tcc-icon.png') }}" alt="TCC">
                 <span>TCC</span>
             </a>

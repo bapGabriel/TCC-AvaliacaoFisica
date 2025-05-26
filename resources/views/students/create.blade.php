@@ -24,7 +24,7 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg bg-primary-color border-bottom" id="navbar">
         <div class="container py-3 d-flex justify-content-between align-items-center">
-            <a href="/" class="navbar-brand primary-color d-flex align-items-center">
+            <a href="{{ route('home') }}" class="navbar-brand primary-color d-flex align-items-center">
                 <img src="{{ asset('img/tcc-icon.png') }}" alt="TCC" style="height: 40px;">
                 <span class="ms-2">TCC</span>
             </a>
